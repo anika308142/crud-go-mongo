@@ -118,15 +118,19 @@ func GetAllMovies() []primitive.D {
 }
 
 //find one
-func getOneMovie(movieId string) *mongo.SingleResult {
+func getOneMovie(movieId string) primitive.M {
 	id, err := primitive.ObjectIDFromHex(movieId)
+
 	if err != nil {
 		log.Fatal("Not found")
 	}
+
 	filter := bson.M{"_id": id}
 
-	result := collection.FindOne(context.Background(), filter)
-
+	var result bson.M
+	if err = collection.FindOne(context.Background(), filter).Decode(&result); err != nil {
+		log.Fatal(err)
+	}
 	return result
 
 }
